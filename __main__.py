@@ -14,10 +14,14 @@ def execute(args: dict) -> bool:
             )
 
         case "train":
-            module.train()
+            module.train(data_path=args["data_path"])
 
         case "test":
-            module.test()
+            module.test(
+                data_path=args["data_path"],
+                model_path=args["model_path"],
+                task=args["task"],
+            )
 
         case "export":
             module.export()

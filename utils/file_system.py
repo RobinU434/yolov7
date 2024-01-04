@@ -1,23 +1,43 @@
+import glob
 import os
+import re
 import zipfile
-from typing import List
+from pathlib import Path
+from typing import Any, Dict, List
 
 import torch
+import yaml
 from yolov7.utils.logging import info_log
 
 
-def load_txt(path: str) -> List[str]:
+def load_txt(path: str, encoding: str = "utf-8") -> List[str]:
     """opens and reads lines from txt file
 
     Args:
         path (str): path to txt file
+        encoding (str): encoding of txt file. Default set to "utf-8"
 
     Returns:
         List[str]: content of txt file
     """
-    with open(path, "r", encoding="utf-8") as file:
+    with open(path, "r", encoding=encoding) as file:
         content = file.readlines()
     content = [line.rstrip("\n").strip(" ") for line in content]
+    return content
+
+
+def load_yaml(path: str, encoding: str = "utf-8") -> Dict[str, Any]:
+    """opens and reads a yaml file and returns the content dict
+
+    Args:
+        path (str): path to yaml file
+        encoding (str): encoding of txt file. Default set to "utf-8"
+
+    Returns:
+        Dict[str, Any]: content of yaml file
+    """
+    with open(path, "r", encoding=encoding) as file:
+        content = yaml.safe_load(file)
     return content
 
 
@@ -75,3 +95,34 @@ def create_directory(path: str):
         path (str): path to directory
     """
     os.makedirs(path)
+
+
+def increment_path(path: str | Path, exist_ok=True, sep="") -> Path:
+    """Increment path
+
+    Example:
+    >>> increment_path("runs/exp")
+    runs/exp{sep}0
+
+    Args:
+        path (str | Path): where to increment the path
+        exist_ok (bool, optional): check if path already exists. Defaults to True.
+        sep (str, optional): separator before index. Defaults to "".
+
+    Returns:
+        Path: incremented path
+    """
+    # Increment path, i.e. runs/exp --> runs/exp{sep}0, runs/exp{sep}1 etc.
+    if not isinstance(path, Path):
+        path = Path(path)  # os-agnostic
+
+    if (path.exists() and exist_ok) or (not path.exists()):
+        path = str(path)
+    else:
+        dirs = glob.glob(f"{path}{sep}*")  # similar paths
+        matches = [re.search(rf"%s{sep}(\d+)" % path.stem, d) for d in dirs]
+        i = [int(m.groups()[0]) for m in matches if m]  # indices
+        n = max(i) + 1 if i else 2  # increment number
+        path = f"{path}{sep}{n}"  # update path
+
+    return Path(path)

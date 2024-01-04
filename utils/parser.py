@@ -6,10 +6,35 @@ def add_export_args(parser: ArgumentParser) -> ArgumentParser:
 
 
 def add_test_args(parser: ArgumentParser) -> ArgumentParser:
+    parser.add_argument(
+        "--data-path",
+        help="_description_",
+        dest="data_path",
+        type=str,
+    )
+    parser.add_argument(
+        "--model-path",
+        help="path to model checkpoint",
+        dest="model_path",
+        type=str,
+    )
+    parser.add_argument(
+        "--task",
+        help="test, speed or study",
+        dest="task",
+        type=str,
+        default="test",
+    )
     return parser
 
 
 def add_train_args(parser: ArgumentParser) -> ArgumentParser:
+    parser.add_argument(
+        "--data-path",
+        help="_description_",
+        dest="data_path",
+        type=str,
+    )
     return parser
 
 

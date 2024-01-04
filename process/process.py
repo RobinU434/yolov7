@@ -1,3 +1,6 @@
+import logging
+from yolov7.dataset.utils import check_dataset_coco
+from yolov7.process.tester import Tester
 from yolov7.utils.file_system import (
     check_existing_directory,
     create_directory,
@@ -14,7 +17,6 @@ class YOLOV7Process:
 
     def __init__(self) -> None:
         """init class"""
-        pass
 
     def download_data(self, source: str, destination: str, unpack: bool = True):
         """
@@ -26,25 +28,44 @@ class YOLOV7Process:
             unpack (bool): Would you like to unpack the zip files. Default set to True
         """
         urls = load_txt(source)
-        
+
         if not check_existing_directory(destination):
             create_directory(destination)
 
         zip_paths = download_zip(urls, destination)
+
         if unpack:
             unpack_zip(zip_paths)
 
     def train(self, data_path: str):
-        """
-        start training process
-        """
-        pass
+        """start training process
 
-    def test(self, data_path: str):
+        Args:
+            data_path (str): _description_
+        """
+        if not check_dataset_coco(data_path):
+            msg = "Not possible to continue without proper data source. Please download the data with the 'download' command provided by this toolbox."
+            logging.fatal(msg)
+            exit()
+
+    def test(self, data_path: str, model_path: str, task: str = "test"):
         """
         start test process
+
+        Args:
+            data_path (str): _description_
+            model_path (str): path to model checkpoint
+            task (str): test, speed or study
         """
-        pass
+        tester = Tester(model_path, data_path)
+
+        match task:
+            case "test":
+                tester.test()
+            case "speed":
+                tester.speed()
+            case "study":
+                tester.study()
 
     def export(self):
         """
