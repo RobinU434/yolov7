@@ -18,9 +18,9 @@ import torch
 import torchvision
 import yaml
 
-from utils.google_utils import gsutil_getsize
-from utils.metrics import fitness
-from utils.torch_utils import init_torch_seeds
+from yolov7.utils.google_utils import gsutil_getsize
+from yolov7.utils.metrics import fitness
+from yolov7.utils.torch_utils import init_torch_seeds
 
 # Settings
 torch.set_printoptions(linewidth=320, precision=5, profile="long")
@@ -197,6 +197,7 @@ def check_file(file):
 def check_dataset(dict):
     # Download dataset if not found locally
     val, s = dict.get("val"), dict.get("download")
+
     if val and len(val):
         val = [
             Path(x).resolve() for x in (val if isinstance(val, list) else [val])
@@ -208,8 +209,6 @@ def check_dataset(dict):
             )
             if s and len(s):  # download script
                 print("Downloading %s ..." % s)
-                print(s, Path(s).name)
-                exit()
                 if s.startswith("http") and s.endswith(".zip"):  # URL
                     f = Path(s).name  # filename
                     torch.hub.download_url_to_file(s, f)

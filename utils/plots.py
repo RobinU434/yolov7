@@ -18,8 +18,8 @@ import yaml
 from PIL import Image, ImageDraw, ImageFont
 from scipy.signal import butter, filtfilt
 
-from utils.general import xywh2xyxy, xyxy2xywh
-from utils.metrics import fitness
+from yolov7.utils.general import xywh2xyxy, xyxy2xywh
+from yolov7.utils.metrics import fitness
 
 # Settings
 matplotlib.rc("font", **{"size": 11})
@@ -225,7 +225,6 @@ def plot_images(
             (255, 255, 255),
             thickness=3,
         )
-
     if fname:
         r = min(1280.0 / max(h, w) / ns, 1.0)  # ratio to limit image size
         mosaic = cv2.resize(

@@ -8,27 +8,25 @@ import numpy as np
 import torch
 import yaml
 from tqdm import tqdm
-
 from models.experimental import attempt_load
 from utils.datasets import create_dataloader
 from utils.general import (
-    coco80_to_coco91_class,
+    box_iou,
     check_dataset,
     check_file,
     check_img_size,
-    check_requirements,
-    box_iou,
+    coco80_to_coco91_class,
+    colorstr,
+    increment_path,
     non_max_suppression,
     scale_coords,
-    xyxy2xywh,
-    xywh2xyxy,
     set_logging,
-    increment_path,
-    colorstr,
+    xywh2xyxy,
+    xyxy2xywh,
 )
-from utils.metrics import ap_per_class, ConfusionMatrix
-from utils.plots import plot_images, output_to_target, plot_study_txt
-from utils.torch_utils import select_device, time_synchronized, TracedModel
+from utils.metrics import ConfusionMatrix, ap_per_class
+from utils.plots import output_to_target, plot_images, plot_study_txt
+from utils.torch_utils import TracedModel, select_device, time_synchronized
 
 
 def test(
@@ -60,21 +58,22 @@ def test(
     training = model is not None
     if training:  # called by train.py
         device = next(model.parameters()).device  # get model device
-
     else:  # called directly
         set_logging()
         device = select_device(opt.device, batch_size=batch_size)
-
         # Directories
         save_dir = Path(
             increment_path(Path(opt.project) / opt.name, exist_ok=opt.exist_ok)
         )  # increment run
+
+        print(save_dir)
         (save_dir / "labels" if save_txt else save_dir).mkdir(
             parents=True, exist_ok=True
         )  # make dir
 
         # Load model
         model = attempt_load(weights, map_location=device)  # load FP32 model
+        print(type(model))
         gs = max(int(model.stride.max()), 32)  # grid size (max stride)
         imgsz = check_img_size(imgsz, s=gs)  # check img_size
 
@@ -94,6 +93,7 @@ def test(
         is_coco = data.endswith("coco.yaml")
         with open(data) as f:
             data = yaml.load(f, Loader=yaml.SafeLoader)
+    print(data)
     check_dataset(data)  # check
     nc = 1 if single_cls else int(data["nc"])  # number of classes
     iouv = torch.linspace(0.5, 0.95, 10).to(device)  # iou vector for mAP@0.5:0.95
@@ -124,6 +124,8 @@ def test(
             rect=True,
             prefix=colorstr(f"{task}: "),
         )[0]
+    print(dataloader)
+    exit()
 
     if v5_metric:
         print("Testing with YOLOv5 AP metric...")
