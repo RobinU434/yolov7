@@ -1,4 +1,6 @@
-from object_detection.model.yolov7.utils.file_system import (
+from yolov7.utils.file_system import (
+    check_existing_directory,
+    create_directory,
     download_zip,
     load_txt,
     unpack_zip,
@@ -24,17 +26,21 @@ class YOLOV7Process:
             unpack (bool): Would you like to unpack the zip files. Default set to True
         """
         urls = load_txt(source)
+        
+        if not check_existing_directory(destination):
+            create_directory(destination)
+
         zip_paths = download_zip(urls, destination)
         if unpack:
             unpack_zip(zip_paths)
 
-    def train(self):
+    def train(self, data_path: str):
         """
         start training process
         """
         pass
 
-    def test(self):
+    def test(self, data_path: str):
         """
         start test process
         """
