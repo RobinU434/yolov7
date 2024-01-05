@@ -8,9 +8,9 @@ import numpy as np
 import torch
 import yaml
 from tqdm import tqdm
-from models.experimental import attempt_load
-from utils.datasets import create_dataloader
-from utils.general import (
+from yolov7.models.experimental import attempt_load
+from yolov7.utils.datasets import create_dataloader
+from yolov7.utils.general import (
     box_iou,
     check_dataset,
     check_file,
@@ -24,9 +24,9 @@ from utils.general import (
     xywh2xyxy,
     xyxy2xywh,
 )
-from utils.metrics import ConfusionMatrix, ap_per_class
-from utils.plots import output_to_target, plot_images, plot_study_txt
-from utils.torch_utils import TracedModel, select_device, time_synchronized
+from yolov7.utils.metrics import ConfusionMatrix, ap_per_class
+from yolov7.utils.plots import output_to_target, plot_images, plot_study_txt
+from yolov7.utils.torch_utils import TracedModel, select_device, time_synchronized
 
 
 def test(
@@ -124,8 +124,6 @@ def test(
             rect=True,
             prefix=colorstr(f"{task}: "),
         )[0]
-    print(dataloader)
-    exit()
 
     if v5_metric:
         print("Testing with YOLOv5 AP metric...")
