@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from utils.general import (
+from yolov7.utils.general import (
     bbox_iou,
     bbox_alpha_iou,
     box_iou,
@@ -13,7 +13,7 @@ from utils.general import (
     box_ciou,
     xywh2xyxy,
 )
-from utils.torch_utils import is_parallel
+from yolov7.utils.torch_utils import is_parallel
 
 
 def smooth_BCE(

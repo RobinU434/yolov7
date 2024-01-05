@@ -8,11 +8,10 @@ import requests
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchvision.ops import DeformConv2d
 from PIL import Image
 from torch.cuda import amp
 
-from yolov7.utils.datasets import letterbox
+from yolov7.dataset.datasets import letterbox
 from yolov7.utils.general import (
     non_max_suppression,
     make_divisible,

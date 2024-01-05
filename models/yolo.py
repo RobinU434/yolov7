@@ -19,7 +19,7 @@ from yolov7.utils.torch_utils import (
     select_device,
     copy_attr,
 )
-from utils.loss import SigmoidBin
+from yolov7.utils.loss import SigmoidBin
 
 try:
     import thop  # for FLOPS computation
@@ -747,6 +747,7 @@ class Model(nn.Module):
         logger.info("")
 
     def forward(self, x, augment=False, profile=False):
+        # TODO: move augment to the Datapipeline and out of the model
         if augment:
             img_size = x.shape[-2:]  # height, width
             s = [1, 0.83, 0.67]  # scales

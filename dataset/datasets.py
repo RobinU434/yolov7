@@ -20,14 +20,7 @@ from PIL import Image, ExifTags
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-import pickle
-from copy import deepcopy
-
-# from pycocotools import mask as maskUtils
-from torchvision.utils import save_image
-from torchvision.ops import roi_pool, roi_align, ps_roi_pool, ps_roi_align
-
-from utils.general import (
+from yolov7.utils.general import (
     check_requirements,
     xyxy2xywh,
     xywh2xyxy,
@@ -38,7 +31,7 @@ from utils.general import (
     resample_segments,
     clean_str,
 )
-from utils.torch_utils import torch_distributed_zero_first
+from yolov7.utils.torch_utils import torch_distributed_zero_first
 
 # Parameters
 help_url = "https://github.com/ultralytics/yolov5/wiki/Train-Custom-Data"
@@ -96,7 +89,7 @@ def create_dataloader(
     imgsz,
     batch_size,
     stride,
-    opt,
+    single_cls=False,
     hyp=None,
     augment=False,
     cache=False,
@@ -119,7 +112,7 @@ def create_dataloader(
             hyp=hyp,  # augmentation hyperparameters
             rect=rect,  # rectangular training
             cache_images=cache,
-            single_cls=opt.single_cls,
+            single_cls=single_cls,
             stride=int(stride),
             pad=pad,
             image_weights=image_weights,
@@ -168,11 +161,7 @@ class InfiniteDataLoader(torch.utils.data.dataloader.DataLoader):
 
 
 class _RepeatSampler(object):
-    """Sampler that repeats forever
-
-    Args:
-        sampler (Sampler)
-    """
+    """Sampler that repeats forever"""
 
     def __init__(self, sampler):
         self.sampler = sampler
@@ -192,7 +181,7 @@ class LoadImages:  # for inference
         elif os.path.isfile(p):
             files = [p]  # files
         else:
-            raise Exception(f"ERROR: {p} does not exist")
+            raise FileNotFoundError(f"ERROR: {p} does not exist")
 
         images = [x for x in files if x.split(".")[-1].lower() in img_formats]
         videos = [x for x in files if x.split(".")[-1].lower() in vid_formats]
@@ -212,6 +201,8 @@ class LoadImages:  # for inference
             f"No images or videos found in {p}. "
             f"Supported formats are:\nimages: {img_formats}\nvideos: {vid_formats}"
         )
+
+        self.count: int
 
     def __iter__(self):
         self.count = 0

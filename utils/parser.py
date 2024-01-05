@@ -2,6 +2,48 @@ from argparse import ArgumentParser
 
 
 def add_export_args(parser: ArgumentParser) -> ArgumentParser:
+    parser.add_argument(
+        "--model-path",
+        help="weights path",
+        dest="model_path",
+        type=str,
+    )
+    parser.add_argument(
+        "--image-size",
+        help="image size. Defaults to [640, 400].",
+        dest="image_size",
+        type=int,
+        nargs="+",
+        default=[640, 640],
+    )
+    parser.add_argument(
+        "--max-wh",
+        help="None for tensorrt nms, int value for onnx-runtime nms. Defaults to 64.",
+        dest="max_wh",
+        type=int,
+        default="64",
+    )
+    parser.add_argument(
+        "--grid",
+        help="export Detect() layer grid. Defaults to False.",
+        dest="grid",
+        type=bool,
+        default="False",
+    )
+    parser.add_argument(
+        "--end2end",
+        help="export end2end onnx. Defaults to False.",
+        dest="end2end",
+        type=bool,
+        default="False",
+    )
+    parser.add_argument(
+        "--simplify",
+        help="simplify onnx model. Defaults to False.",
+        dest="simplify",
+        type=bool,
+        default="False",
+    )
     return parser
 
 

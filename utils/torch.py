@@ -1,10 +1,9 @@
 import logging
 import os
+import time
 
 import torch
-from yolov7.utils.date_time import date_string
-
-from yolov7.utils.git import git_describe
+from torch.serialization import MAP_LOCATION
 
 
 def select_device(device: str) -> torch.device:
@@ -56,3 +55,29 @@ def check_batch_size(device: torch.device, batch_size: int) -> int:
         logging.fatal(msg)
         raise ValueError(msg)
     return batch_size
+
+
+def set_map_location(device: torch.device) -> MAP_LOCATION:
+    """returns in case a map to map the storage location from cuda to cpu
+
+    Args:
+        device (torch.device): device
+
+    Returns:
+        MAP_LOCATION: is either None or a torch.device
+    """
+    if device.type == "cpu":
+        return device
+    return None
+
+
+def time_synchronized() -> float:
+    """get pytorch-accurate time
+
+    Returns:
+        float: accurate time
+    """
+    #
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+    return time.time()

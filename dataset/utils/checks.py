@@ -1,9 +1,7 @@
-import glob
 import logging
 import os
-from torch.utils.data import Dataset
 
-from yolov7.utils.file_system import load_yaml
+from yolov7.utils.arithmetic import make_divisible
 
 
 def check_dataset_coco(path_to_dataset: str) -> bool:
@@ -60,6 +58,20 @@ def check_dataset_coco(path_to_dataset: str) -> bool:
     return True
 
 
-def load_dataset(path: str, entity: str = "train") -> Dataset:
-    coco_meta = load_yaml("data/coco.yaml")
-    print(coco_meta)
+def check_img_size(img_size: int, s: int = 32) -> int:
+    """Verify img_size is a multiple of stride s
+
+    Args:
+        img_size (int): _description_
+        s (int, optional): _description_. Defaults to 32.
+
+    Returns:
+        int: _description_
+    """
+    new_size = make_divisible(img_size, int(s))  # ceil gs-multiple
+    if new_size != img_size:
+        print(
+            "WARNING: --img-size %g must be multiple of max stride %g, updating to %g"
+            % (img_size, s, new_size)
+        )
+    return new_size

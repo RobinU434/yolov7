@@ -24,7 +24,14 @@ def execute(args: dict) -> bool:
             )
 
         case "export":
-            module.export()
+            module.export(
+                model_path=args["model_path"],
+                image_size=args["image_size"],
+                max_wh=args["max_wh"],
+                grid=args["grid"],
+                end2end=args["end2end"],
+                simplify=args["simplify"],
+            )
 
         case _:
             return False

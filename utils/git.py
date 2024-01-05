@@ -14,8 +14,9 @@ def git_describe(path: Path = Path(__file__).parent) -> str:
     """
     s = f"git -C {path} describe --tags --long --always"
     try:
-        return subprocess.check_output(
+        git_commit = subprocess.check_output(
             s, shell=True, stderr=subprocess.STDOUT
         ).decode()[:-1]
+        return "git commit: " + git_commit
     except subprocess.CalledProcessError:
         return ""  # not a git repository
